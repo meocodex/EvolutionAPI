@@ -1,0 +1,32 @@
+version: "3.7"
+services:
+  evolution-api:
+    image: atendai/evolution-api:v2.1.1
+    ports:
+      - "8080:8080"
+    volumes:
+      - evolution_instances:/evolution/instances
+    environment:
+      DB_PROVIDER: postgresql   # Use "=" no lugar de ":"
+      DB_HOST: whatsapp_saas_database  # Correção no uso de ":"
+      DB_PORT: "5432"    # Colocar a porta entre aspas
+      DB_USER: evolution
+      DB_PASSWORD: 102030
+      DB_NAME: evolution_db
+    networks:
+      - whatsapp-saas_app-network   # Remover os dois-pontos no final
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      restart_policy:
+        condition: on-failure
+
+networks:
+  whatsapp-saas_app-network:
+    external: true  # Mantém a rede como externa, garantindo que já existe
+
+volumes:
+  evolution_instances:
